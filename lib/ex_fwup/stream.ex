@@ -42,22 +42,22 @@ defmodule ExFwup.Stream do
   end
 
   def handle_info({_port, {:data, <<"PR", progress::16>>}}, state) do
-    send(state.cm, {:progress, progress})
+    dispatch(state, {:progress, progress})
     {:noreply, state}
   end
 
   def handle_info({_port, {:data, <<"ER", code::16, message::binary>>}}, state) do
-    send(state.cm, {:error, code, message})
+    dispatch(state, {:error, code, message})
     {:noreply, state}
   end
 
   def handle_info({_port, {:data, <<"WN", code::16, message::binary>>}}, state) do
-    send(state.cm, {:warning, code, message})
+    dispatch(state, {:warning, code, message})
     {:noreply, state}
   end
 
   def handle_info({_port, {:data, <<"OK", code::16, message::binary>>}}, state) do
-    send(state.cm, {:ok, code, message})
+    dispatch(state, {:ok, code, message})
     {:noreply, state}
   end
 
@@ -68,4 +68,6 @@ defmodule ExFwup.Stream do
   def handle_info({_port, {:exit_status, status}}, state) do
     {:stop, {:exit, status}, %{state | port: nil}}
   end
+
+  defp dispatch(%{cm: cm}, msg), do: send(cm, {:fwup, msg})
 end

@@ -14,9 +14,9 @@ defmodule ExFwup.StreamTest do
     end)
     |> Stream.run()
 
-    refute_receive {:error, _code, _message}
-    assert_receive {:progress, 100}
-    assert_receive {:ok, 0, ""}
+    refute_receive {:fwup, {:error, _code, _message}}
+    assert_receive {:fwup, {:progress, 100}}
+    assert_receive {:fwup, {:ok, 0, ""}}
     assert File.exists?(dev)
   end
 
@@ -25,9 +25,9 @@ defmodule ExFwup.StreamTest do
     dev = Path.join(Path.dirname(fw), "regular.img")
     args = ["-a", "-i", fw, "-t", "complete", "-d", dev]
     {:ok, _} = ExFwup.stream(self(), args)
-    refute_receive {:error, _code, _message}
-    assert_receive {:progress, 100}
-    assert_receive {:ok, 0, ""}
+    refute_receive {:fwup, {:error, _code, _message}}
+    assert_receive {:fwup, {:progress, 100}}
+    assert_receive {:fwup, {:ok, 0, ""}}
     assert File.exists?(dev)
   end
 end
