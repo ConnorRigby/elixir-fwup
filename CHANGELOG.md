@@ -1,3 +1,6 @@
+# 0.3.0
+  * Rename to `Fwup`
+
 # 0.2.0
   * Add namespace to messages from fwup.
 

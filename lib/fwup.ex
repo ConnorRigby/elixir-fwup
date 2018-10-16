@@ -1,4 +1,4 @@
-defmodule ExFwup do
+defmodule Fwup do
   @moduledoc """
   Configurable embedded Linux firmware update creator and runner
   """
@@ -18,6 +18,6 @@ defmodule ExFwup do
     System.find_executable("fwup") || raise("Could not find `fwup` executable.")
   end
 
-  defdelegate stream(pid, args), to: ExFwup.Stream, as: :start_link
-  defdelegate send_chunk(pid, chunk), to: ExFwup.Stream
+  defdelegate stream(pid, args), to: Fwup.Stream, as: :start_link
+  defdelegate send_chunk(pid, chunk), to: Fwup.Stream
 end

@@ -1,10 +1,10 @@
-defmodule ExFwup.MixProject do
+defmodule Fwup.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :ex_fwup,
-      version: "0.2.0",
+      app: :fwup,
+      version: "0.3.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -40,7 +40,7 @@ defmodule ExFwup.MixProject do
     [
       maintainers: ["Connor Rigby"],
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/ConnorRigby/ex_fwup"}
+      links: %{"GitHub" => "https://github.com/ConnorRigby/elixir-fwup"}
     ]
   end
 end

@@ -1,4 +1,4 @@
-defmodule ExFwup.Stream do
+defmodule Fwup.Stream do
   @moduledoc """
   Procses wrapper around the `fwup` port.
   Should be used with `--framing`
@@ -16,7 +16,7 @@ defmodule ExFwup.Stream do
   end
 
   def init([cm | args]) do
-    fwup_exe = ExFwup.exe()
+    fwup_exe = Fwup.exe()
 
     port_args = [
       {:args, ["--framing" | args]},

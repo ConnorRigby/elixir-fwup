@@ -1,4 +1,4 @@
-defmodule ExFwupTest do
+defmodule FwupTest do
   use ExUnit.Case
-  doctest ExFwup
+  doctest Fwup
 end
