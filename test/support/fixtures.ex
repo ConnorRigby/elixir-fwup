@@ -1,6 +1,6 @@
 # Copy Paste of NervesHubCore.Support.Fwup
 # As found https://github.com/nerves-hub/nerves_hub_web/blob/37290d5e21c1a082ca7dccfd07227cf296b4f45d/test/support/fwup.ex
-defmodule ExFwup.TestSupport.Fixtures do
+defmodule Fwup.TestSupport.Fixtures do
   @moduledoc """
   This module is intended to help with testing and development
   by allowing for "easy" creation of firmware signing keys, and
