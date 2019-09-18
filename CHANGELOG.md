@@ -1,3 +1,6 @@
+# 0.4.0
+  * Default to global port for firmware streaming
+
 # 0.3.0
   * Rename to `Fwup`
 
