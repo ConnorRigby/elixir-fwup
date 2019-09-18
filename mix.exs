@@ -38,9 +38,12 @@ defmodule Fwup.MixProject do
 
   defp package do
     [
-      maintainers: ["Connor Rigby"],
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/ConnorRigby/elixir-fwup"}
+      links: %{
+        "GitHub" => "https://github.com/ConnorRigby/elixir-fwup",
+        "fwup" => "https://github.com/fhunleth/fwup",
+        "nerves" => "https://github.com/nerves-project/"
+      }
     ]
   end
 end
