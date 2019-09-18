@@ -1,5 +1,8 @@
 # Fwup
 
+[![CircleCI](https://circleci.com/gh/ConnorRigby/elixir-fwup.svg?style=svg)](https://circleci.com/gh/ConnorRigby/elixir-fwup)
+[![Hex version](https://img.shields.io/hexpm/v/fwup.svg "Hex version")](https://hex.pm/packages/fwup)
+
 Simple Elixir wrapper around [FWUP](https://github.com/fhunleth/fwup)
 
 ## Usage
