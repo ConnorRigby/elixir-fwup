@@ -6,7 +6,7 @@ defmodule Fwup.StreamTest do
     {:ok, fw} = Fixtures.create_firmware("test_stream")
     dev = Path.join(Path.dirname(fw), "test_stream.img")
     args = ["-a", "-t", "complete", "-d", dev]
-    {:ok, fwup} = Fwup.stream(self(), args)
+    {:ok, fwup} = Fwup.stream(self(), args, [])
 
     File.stream!(fw, [:bytes], 4096)
     |> Stream.map(fn chunk ->
@@ -24,7 +24,7 @@ defmodule Fwup.StreamTest do
     {:ok, fw} = Fixtures.create_firmware("regular")
     dev = Path.join(Path.dirname(fw), "regular.img")
     args = ["-a", "-i", fw, "-t", "complete", "-d", dev]
-    {:ok, _} = Fwup.stream(self(), args)
+    {:ok, _} = Fwup.stream(self(), args, [])
     refute_receive {:fwup, {:error, _code, _message}}
     assert_receive {:fwup, {:progress, 100}}
     assert_receive {:fwup, {:ok, 0, ""}}

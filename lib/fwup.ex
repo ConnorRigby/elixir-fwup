@@ -18,6 +18,9 @@ defmodule Fwup do
     System.find_executable("fwup") || raise("Could not find `fwup` executable.")
   end
 
-  defdelegate stream(pid, args), to: Fwup.Stream, as: :start_link
-  defdelegate send_chunk(pid, chunk), to: Fwup.Stream
+  @doc "Stream firmware image to the device"
+  defdelegate stream(pid, args, opts \\ [name: Fwup.Stream]), to: Fwup.Stream, as: :start_link
+
+  defdelegate send_chunk(pid, chunk),
+    to: Fwup.Stream
 end
