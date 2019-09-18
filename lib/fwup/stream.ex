@@ -1,12 +1,18 @@
 defmodule Fwup.Stream do
   @moduledoc """
-  Procses wrapper around the `fwup` port.
+  Process wrapper around the `fwup` port.
   Should be used with `--framing`
   """
   use GenServer
 
-  @doc "Start a FWUP stream."
-  def start_link(cm, args, opts \\ []) do
+  @doc """
+  Start a FWUP stream
+
+  ## Warning
+  By default will create a `global` named process. This means that ideally
+  you can not open two streams at once.
+  """
+  def start_link(cm, args, opts \\ [name: __MODULE__]) do
     GenServer.start_link(__MODULE__, [cm | args], opts)
   end
 
