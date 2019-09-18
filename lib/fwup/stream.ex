@@ -4,6 +4,7 @@ defmodule Fwup.Stream do
   Should be used with `--framing`
   """
   use GenServer
+  require Logger
 
   @doc """
   Start a FWUP stream
@@ -33,7 +34,7 @@ defmodule Fwup.Stream do
     ]
 
     port = Port.open({:spawn_executable, fwup_exe}, port_args)
-    {:ok, %{port: port, cm: cm}}
+    {:ok, %{port: port, cm: cm, progress: 0}}
   end
 
   def terminate(_, state) do
@@ -47,8 +48,15 @@ defmodule Fwup.Stream do
     {:reply, :ok, state}
   end
 
-  def handle_info({_port, {:data, <<"PR", progress::16>>}}, state) do
+  def handle_info({_port, {:data, <<"PR", progress::16>>}}, %{progress: last_progress} = state)
+      when progress >= last_progress do
     dispatch(state, {:progress, progress})
+    {:noreply, %{state | progress: progress}}
+  end
+
+  # Ideally, this will never happen
+  def handle_info({_port, {:data, <<"PR", progress::16>>}}, state) do
+    Logger.warn("Dropping progress report #{progress}")
     {:noreply, state}
   end
 
@@ -73,6 +81,11 @@ defmodule Fwup.Stream do
 
   def handle_info({_port, {:exit_status, status}}, state) do
     {:stop, {:exit, status}, %{state | port: nil}}
+  end
+
+  def handle_info({_port, info}, state) do
+    Logger.warn("Unknown info in FWUP stream: #{inspect(info)}")
+    {:noreply, state}
   end
 
   defp dispatch(%{cm: cm}, msg), do: send(cm, {:fwup, msg})
