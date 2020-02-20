@@ -107,10 +107,12 @@ defmodule Fwup.TestSupport.Fixtures do
   """
   def corrupt_firmware_file(input_path, output_name \\ "corrupt") do
     output_path = Path.join([System.tmp_dir(), output_name <> ".fw"])
+    :ok = File.cp!(input_path, output_path)
 
-    System.cmd("dd", ["if=" <> input_path, "of=" <> output_path, "bs=512", "count=1"],
-      stderr_to_stdout: true
-    )
+    {_, 0} =
+      System.cmd("dd", ["if=/dev/urandom", "of=" <> output_path, "bs=512", "count=1"],
+        stderr_to_stdout: true
+      )
 
     {:ok, output_path}
   end
