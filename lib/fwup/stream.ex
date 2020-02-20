@@ -25,7 +25,7 @@ defmodule Fwup.Stream do
     fwup_exe = Fwup.exe()
 
     port_args = [
-      {:args, ["--framing" | args]},
+      {:args, ["--framing", "--exit-handshake" | args]},
       :use_stdio,
       :binary,
       :exit_status,
@@ -52,27 +52,25 @@ defmodule Fwup.Stream do
     {:noreply, state}
   end
 
-  def handle_info({_port, {:data, <<"ER", code::16, message::binary>>}}, state) do
-    dispatch(state, {:error, code, message})
-    {:noreply, state}
-  end
-
   def handle_info({_port, {:data, <<"WN", code::16, message::binary>>}}, state) do
     dispatch(state, {:warning, code, message})
     {:noreply, state}
   end
 
-  def handle_info({_port, {:data, <<"OK", code::16, message::binary>>}}, state) do
-    dispatch(state, {:ok, code, message})
-    {:noreply, state}
+  def handle_info({port, {:data, <<"ER", code::16, message::binary>>}}, state) do
+    dispatch(state, {:error, code, message})
+    _ = Port.close(port)
+    {:stop, message, %{state | port: nil}}
   end
 
-  def handle_info({_port, {:exit_status, 0}}, state) do
+  def handle_info({port, {:data, <<"OK", code::16, message::binary>>}}, state) do
+    dispatch(state, {:ok, code, message})
+    _ = Port.close(port)
     {:stop, :normal, %{state | port: nil}}
   end
 
   def handle_info({_port, {:exit_status, status}}, state) do
-    {:stop, {:exit, status}, %{state | port: nil}}
+    {:stop, {:error, {:unexpected_exit, status}}, %{state | port: nil}}
   end
 
   defp dispatch(%{cm: cm}, msg), do: send(cm, {:fwup, msg})
