@@ -20,33 +20,24 @@ install_system_deps: &install_system_deps
     name: Install system dependencies
     command: |
       apt update
-      apt install -y unzip astyle libmnl-dev
-      wget https://github.com/fhunleth/fwup/releases/download/v1.3.1/fwup_1.3.1_amd64.deb
-      dpkg -i fwup_1.3.1_amd64.deb
-
-install_mdl: &install_mdl
-  run:
-    name: Install Markdown Lint
-    command: |
-      apt install -y ruby
-      gem install mdl
+      apt install -y unzip
+      wget https://github.com/fhunleth/fwup/releases/download/v1.6.0/fwup_1.6.0_amd64.deb
+      dpkg -i fwup_1.6.0_amd64.deb
 
 defaults: &defaults
   working_directory: ~/repo
 
 jobs:
-  build_elixir_1_9_otp_22:
+  build_elixir_1_10_otp_22:
     docker:
-      - image: erlang:22.0
+      - image: erlang:22.3
         environment:
-          ELIXIR_VERSION: 1.9.0-otp-22
+          ELIXIR_VERSION: 1.10.3-otp-22
           LC_ALL: C.UTF-8
-          SUDO: true
     <<: *defaults
     steps:
       - checkout
       - <<: *install_system_deps
-      - <<: *install_mdl
       - <<: *install_elixir
       - <<: *install_hex_rebar
       - restore_cache:
@@ -55,7 +46,6 @@ jobs:
       - run: mix deps.get
       - run: mix test
       - run: mix format --check-formatted
-      - run: mdl --style .circleci/md-style.rb README.md
       - run: mix docs
       - run: mix hex.build
       - run: mix dialyzer
@@ -65,13 +55,27 @@ jobs:
             - _build
             - deps
 
-  build_elixir_1_8_otp_21:
+  build_elixir_1_9_otp_22:
     docker:
-      - image: erlang:21.3
+      - image: erlang:22.2.8
         environment:
-          ELIXIR_VERSION: 1.8.2-otp-21
+          ELIXIR_VERSION: 1.9.4-otp-22
           LC_ALL: C.UTF-8
-          SUDO: true
+    <<: *defaults
+    steps:
+      - checkout
+      - <<: *install_system_deps
+      - <<: *install_elixir
+      - <<: *install_hex_rebar
+      - run: mix deps.get
+      - run: mix test
+
+  build_elixir_1_8_otp_22:
+    docker:
+      - image: erlang:22.0
+        environment:
+          ELIXIR_VERSION: 1.8.2-otp-22
+          LC_ALL: C.UTF-8
     <<: *defaults
     steps:
       - checkout
@@ -87,23 +91,6 @@ jobs:
         environment:
           ELIXIR_VERSION: 1.7.4-otp-21
           LC_ALL: C.UTF-8
-          SUDO: true
-    <<: *defaults
-    steps:
-      - checkout
-      - <<: *install_system_deps
-      - <<: *install_elixir
-      - <<: *install_hex_rebar
-      - run: mix deps.get
-      - run: mix test
-
-  build_elixir_1_6_otp_21:
-    docker:
-      - image: erlang:21.3
-        environment:
-          ELIXIR_VERSION: 1.6.6-otp-21
-          LC_ALL: C.UTF-8
-          SUDO: true
     <<: *defaults
     steps:
       - checkout
@@ -117,11 +104,11 @@ workflows:
   version: 2
   build_test:
     jobs:
+      - build_elixir_1_10_otp_22:
+          context: org-global
       - build_elixir_1_9_otp_22:
           context: org-global
       - build_elixir_1_8_otp_21:
           context: org-global
       - build_elixir_1_7_otp_21:
-          context: org-global
-      - build_elixir_1_6_otp_21:
           context: org-global
