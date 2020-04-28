@@ -58,7 +58,7 @@ jobs:
       - run: mdl --style .circleci/md-style.rb README.md
       - run: mix docs
       - run: mix hex.build
-      - run: mix dialyzer --halt-exit-status
+      - run: mix dialyzer
       - save_cache:
           key: v1-mix-cache-{{ checksum "mix.lock" }}
           paths:
