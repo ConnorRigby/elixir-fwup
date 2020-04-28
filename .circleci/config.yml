@@ -108,7 +108,7 @@ workflows:
           context: org-global
       - build_elixir_1_9_otp_22:
           context: org-global
-      - build_elixir_1_8_otp_21:
+      - build_elixir_1_8_otp_22:
           context: org-global
       - build_elixir_1_7_otp_21:
           context: org-global
