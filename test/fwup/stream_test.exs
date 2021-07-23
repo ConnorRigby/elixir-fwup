@@ -34,9 +34,9 @@ defmodule Fwup.StreamTest do
   end
 
   test "corrupt firmware stream" do
-    {:ok, fw} = Fixtures.create_firmware("regular-to-currupt")
-    {:ok, fw} = Fixtures.corrupt_firmware_file(fw, "currupted")
-    dev = Path.join(Path.dirname(fw), "regular-to-currupt.img")
+    {:ok, fw} = Fixtures.create_firmware("regular-to-corrupt")
+    {:ok, fw} = Fixtures.corrupt_firmware_file(fw, "corrupted")
+    dev = Path.join(Path.dirname(fw), "regular-to-corrupt.img")
     args = ["-a", "-i", fw, "-t", "complete", "-d", dev]
     _ = Process.flag(:trap_exit, true)
     {:ok, pid} = Fwup.stream(self(), args, [])
