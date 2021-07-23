@@ -19,7 +19,9 @@ defmodule Fwup do
   end
 
   @doc "Stream firmware image to the device"
-  defdelegate stream(pid, args, opts \\ [name: Fwup.Stream]), to: Fwup.Stream, as: :start_link
+  def stream(pid, args, opts \\ [name: Fwup.Stream]) do
+    Fwup.Stream.start_link([cm: pid, fwup_args: args] ++ opts)
+  end
 
   defdelegate send_chunk(pid, chunk),
     to: Fwup.Stream
