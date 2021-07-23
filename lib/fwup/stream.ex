@@ -5,6 +5,15 @@ defmodule Fwup.Stream do
   """
   use GenServer
 
+  @typedoc """
+  GenServer options
+
+  * `:name` - the name of the GenServer
+  * `:cm` - where to send fwup messages
+  * `:fwup_args` - arguments to pass to fwup
+  """
+  @type options() :: [name: atom(), cm: pid(), fwup_args: [String.t()]]
+
   @doc """
   Start a FWUP stream
 
@@ -12,8 +21,15 @@ defmodule Fwup.Stream do
   By default will create a `global` named process. This means that ideally
   you can not open two streams at once.
   """
+  @spec start_link(options()) :: GenServer.on_start()
+  def start_link(init_args) do
+    GenServer.start_link(__MODULE__, init_args, name: init_args[:name])
+  end
+
+  @deprecated "Use Fwup.Stream.start_link/1 instead"
   def start_link(cm, args, opts \\ [name: __MODULE__]) do
-    GenServer.start_link(__MODULE__, [cm | args], opts)
+    init_args = [cm: cm, fwup_args: args] ++ opts
+    start_link(init_args)
   end
 
   @doc "Send a chunk to FWUP."
@@ -21,11 +37,11 @@ defmodule Fwup.Stream do
     GenServer.call(fwup, {:send_chunk, chunk})
   end
 
-  def init([cm | args]) do
+  def init(args) do
     fwup_exe = Fwup.exe()
 
     port_args = [
-      {:args, ["--framing", "--exit-handshake" | args]},
+      {:args, ["--framing", "--exit-handshake" | args[:fwup_args]]},
       :use_stdio,
       :binary,
       :exit_status,
@@ -33,7 +49,7 @@ defmodule Fwup.Stream do
     ]
 
     port = Port.open({:spawn_executable, fwup_exe}, port_args)
-    {:ok, %{port: port, cm: cm}}
+    {:ok, %{port: port, cm: args[:cm]}}
   end
 
   def terminate(_, state) do
