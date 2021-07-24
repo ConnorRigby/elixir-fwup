@@ -11,6 +11,7 @@ defmodule Fwup.Stream do
   * `:name` - the name of the GenServer
   * `:cm` - where to send fwup messages
   * `:fwup_args` - arguments to pass to fwup
+  * `:fwup_env` - a list of tuples to pass in the OS environment to fwup
   """
   @type options() :: [name: atom(), cm: pid(), fwup_args: [String.t()]]
 
@@ -42,6 +43,7 @@ defmodule Fwup.Stream do
 
     port_args = [
       {:args, ["--framing", "--exit-handshake" | args[:fwup_args]]},
+      {:env, env_to_charlist(args[:fwup_env])},
       :use_stdio,
       :binary,
       :exit_status,
@@ -90,4 +92,12 @@ defmodule Fwup.Stream do
   end
 
   defp dispatch(%{cm: cm}, msg), do: send(cm, {:fwup, msg})
+
+  defp env_to_charlist(nil), do: []
+
+  defp env_to_charlist(env) do
+    for {k, v} <- env do
+      {to_charlist(k), to_charlist(v)}
+    end
+  end
 end

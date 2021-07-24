@@ -133,12 +133,16 @@ defmodule Fwup.TestSupport.Fixtures do
     meta-architecture = "#{meta_params.architecture}"
     meta-author = "#{meta_params.author}"
 
-    file-resource  #{Ecto.UUID.generate()}.txt {
-    contents = "Hello, world!"
+    file-resource hello.txt {
+      contents = "Hello, world!"
     }
 
     task complete {
+      on-resource hello.txt { raw_write(0) }
+    }
 
+    task need_secret {
+      on-resource hello.txt { raw_write(0, "cipher=aes-cbc-plain", "secret=\\${SUPER_SECRET}") }
     }
     """
   end

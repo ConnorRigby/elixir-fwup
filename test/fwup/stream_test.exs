@@ -2,6 +2,16 @@ defmodule Fwup.StreamTest do
   use ExUnit.Case
   alias Fwup.TestSupport.Fixtures
 
+  setup_all do
+    {version_str, 0} = System.cmd("fwup", ["--version"])
+    version = version_str |> String.trim() |> Version.parse!()
+
+    Version.match?(version, "~> 1.9.0") ||
+      raise "fwup 1.9.0 or later is needed for the unit tests"
+
+    :ok
+  end
+
   test "File.stream! into fwup" do
     {:ok, fw} = Fixtures.create_firmware("test_stream")
     dev = Path.join(Path.dirname(fw), "test_stream.img")
@@ -42,5 +52,24 @@ defmodule Fwup.StreamTest do
     {:ok, pid} = Fwup.stream(self(), args, [])
     assert_receive {:fwup, {:error, 0, "Unrecognized archive format"}}
     assert_receive {:EXIT, ^pid, "Unrecognized archive format"}
+  end
+
+  test "passing environment fwup" do
+    {:ok, fw} = Fixtures.create_firmware("test_stream")
+    dev = Path.join(Path.dirname(fw), "test_stream.img")
+    args = ["-a", "-t", "need_secret", "-d", dev]
+    env = [{"SUPER_SECRET", "1234567890123456789012345678901234567890123456789012345678901234"}]
+    {:ok, fwup} = Fwup.stream(self(), args, fwup_env: env)
+
+    File.stream!(fw, [:bytes], 4096)
+    |> Stream.map(fn chunk ->
+      Fwup.send_chunk(fwup, chunk)
+    end)
+    |> Stream.run()
+
+    refute_receive {:fwup, {:error, _code, _message}}
+    assert_receive {:fwup, {:progress, 100}}
+    assert_receive {:fwup, {:ok, 0, ""}}
+    assert File.exists?(dev)
   end
 end
