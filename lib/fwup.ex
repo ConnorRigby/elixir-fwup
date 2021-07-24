@@ -18,9 +18,22 @@ defmodule Fwup do
     System.find_executable("fwup") || raise("Could not find `fwup` executable.")
   end
 
-  @doc "Stream firmware image to the device"
-  def stream(pid, args, opts \\ [name: Fwup.Stream]) do
-    Fwup.Stream.start_link([cm: pid, fwup_args: args] ++ opts)
+  @doc """
+  Stream a firmware image to the device
+
+  Options
+
+  * `:name` - register the started GenServer under this name (defaults to Fwup.Stream)
+  * `:fwup_env` - the OS environment to pass to fwup
+  """
+  def stream(pid, args, opts \\ []) do
+    all_opts =
+      opts
+      |> Keyword.put_new(:name, Fwup.Stream)
+      |> Keyword.put(:cm, pid)
+      |> Keyword.put(:fwup_args, args)
+
+    Fwup.Stream.start_link(all_opts)
   end
 
   defdelegate send_chunk(pid, chunk),
