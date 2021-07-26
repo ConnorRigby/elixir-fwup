@@ -1,11 +1,22 @@
-# 0.4.0
-  * Default to global port for firmware streaming
+# Changelog
 
-# 0.3.0
-  * Rename to `Fwup`
+## v1.0.0
 
-# 0.2.0
-  * Add namespace to messages from fwup.
+* New features
+  * Add support for passing OS env variables to fwup
 
-# 0.1.0
-  * Initial Release
+## v0.4.0
+
+* Default to global port for firmware streaming
+
+## v0.3.0
+
+* Rename to `Fwup`
+
+## v0.2.0
+
+* Add namespace to messages from fwup.
+
+## v0.1.0
+
+* Initial Release

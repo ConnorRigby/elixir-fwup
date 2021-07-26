@@ -4,7 +4,7 @@ defmodule Fwup.MixProject do
   def project do
     [
       app: :fwup,
-      version: "0.4.0",
+      version: "1.0.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -42,7 +42,7 @@ defmodule Fwup.MixProject do
       licenses: ["Apache-2.0"],
       links: %{
         "GitHub" => "https://github.com/ConnorRigby/elixir-fwup",
-        "fwup" => "https://github.com/fhunleth/fwup",
+        "fwup" => "https://github.com/fwup-home/fwup",
         "nerves" => "https://github.com/nerves-project/"
       }
     ]
