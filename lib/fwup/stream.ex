@@ -33,11 +33,20 @@ defmodule Fwup.Stream do
     start_link(init_args)
   end
 
-  @doc "Send a chunk to FWUP."
-  def send_chunk(fwup, chunk) do
-    GenServer.call(fwup, {:send_chunk, chunk})
+  @doc """
+  Send a chunk of data to FWUP
+
+  This passes the data to FWUP for processing. Depending on how much data needs
+  to be written, this may take seconds to return. Delta firmware updates, for
+  example, compress extremely well and need to write a lot of data before
+  they're finished processing.
+  """
+  @spec send_chunk(GenServer.server(), iodata(), timeout()) :: :ok
+  def send_chunk(fwup, chunk, timeout \\ 60000) do
+    GenServer.call(fwup, {:send_chunk, chunk}, timeout)
   end
 
+  @impl GenServer
   def init(args) do
     fwup_exe = Fwup.exe()
 
@@ -54,17 +63,20 @@ defmodule Fwup.Stream do
     {:ok, %{port: port, cm: args[:cm]}}
   end
 
+  @impl GenServer
   def terminate(_, state) do
     if state.port && Port.info(state.port) do
       Port.close(state.port)
     end
   end
 
+  @impl GenServer
   def handle_call({:send_chunk, chunk}, _from, state) do
     true = Port.command(state.port, chunk)
     {:reply, :ok, state}
   end
 
+  @impl GenServer
   def handle_info({_port, {:data, <<"PR", progress::16>>}}, state) do
     dispatch(state, {:progress, progress})
     {:noreply, state}
