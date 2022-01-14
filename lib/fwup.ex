@@ -19,6 +19,27 @@ defmodule Fwup do
   end
 
   @doc """
+  Apply a fwupdate
+
+  * `device` - block device to write too. See `get_device/0`.
+  * `task`   - Can be any task in the fwup.conf.
+               Traditionally it will be `upgrade` or `complete`
+  * `path`   - path to the firmware file
+  * `extra_args` - extra optional args to pass to fwup.
+  """
+  def apply(device, task, path, extra_args \\ []) do
+    result =
+      System.cmd(exe(), ["-d", device, "-a", "-t", task, "-i", path, "-q" | extra_args],
+        stderr_to_stdout: true
+      )
+
+    case result do
+      {_, 0} -> :ok
+      {error, _code} -> {:error, error}
+    end
+  end
+
+  @doc """
   Stream a firmware image to the device
 
   Options

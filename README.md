@@ -7,6 +7,16 @@ Simple Elixir wrapper around [FWUP](https://github.com/fhunleth/fwup)
 
 ## Usage
 
+With a file on the filesystem:
+
+```elixir
+iex()> fw = "/path/to/fwup_file.fw"
+iex()> [[dev, _size]] = Fwup.devices()
+iex()> :ok = Fwup.apply(dev, "upgrade", fw)
+```
+
+With a Elixir `File.stream`:
+
 ```elixir
 iex()> fw = "/path/to/fwup_file.fw"
 iex()> [[dev, _size]] = Fwup.devices()
