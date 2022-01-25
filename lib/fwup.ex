@@ -28,15 +28,14 @@ defmodule Fwup do
   * `extra_args` - extra optional args to pass to fwup.
   """
   def apply(device, task, path, extra_args \\ []) do
-    result =
-      System.cmd(exe(), ["-d", device, "-a", "-t", task, "-i", path, "-q" | extra_args],
-        stderr_to_stdout: true
-      )
+    args = ["-a", "-d", device, "-t", task, "-i", path | extra_args]
 
-    case result do
-      {_, 0} -> :ok
-      {error, _code} -> {:error, error}
-    end
+    all_opts =
+      Keyword.put_new([], :name, Fwup.Stream)
+      |> Keyword.put(:cm, self())
+      |> Keyword.put(:fwup_args, args)
+
+    Fwup.Stream.start_link(all_opts)
   end
 
   @doc """
