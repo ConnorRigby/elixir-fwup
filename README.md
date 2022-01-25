@@ -12,7 +12,11 @@ With a file on the filesystem:
 ```elixir
 iex()> fw = "/path/to/fwup_file.fw"
 iex()> [[dev, _size]] = Fwup.devices()
-iex()> :ok = Fwup.apply(dev, "upgrade", fw)
+iex()> {:ok, pid} = Fwup.apply(dev, "upgrade", fw)
+iex()> flush
+iex()> {:fwup, {:progress, 0}}
+iex()> {:fwup, {:progress, 100}}
+iex()> {:fwup, {:ok, 0, ""}}
 ```
 
 With a Elixir `File.stream`:
@@ -31,7 +35,7 @@ iex()> flush()
 {:progress, 0}
 {:progress, 1}
 # many more
-{:progess, 100}
+{:progress, 100}
 {:ok, 0, ""}
 ```
 

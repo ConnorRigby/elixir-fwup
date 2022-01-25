@@ -7,6 +7,8 @@ defmodule FwupTest do
   test "apply" do
     {:ok, fw} = Fixtures.create_firmware("test_apply")
     dev = Path.join(Path.dirname(fw), "test_apply.img")
-    assert :ok = Fwup.apply(dev, "complete", fw)
+    assert {:ok, pid} = Fwup.apply(dev, "complete", fw)
+    assert_receive {:fwup, {:progress, 100}}
+    assert_receive {:fwup, {:ok, 0, ""}}
   end
 end
