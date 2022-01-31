@@ -58,13 +58,20 @@ defmodule Fwup.TestSupport.Fixtures do
     out_path = Path.join([System.tmp_dir(), firmware_name <> ".fw"])
     File.rm(out_path)
 
-    System.cmd("fwup", [
-      "-c",
-      "-f",
-      conf_path,
-      "-o",
-      out_path
-    ])
+    # SOURCE_DATE_EPOCH ensures fwup produces reproducible builds.
+    # Specifically, this will pin the creation-time metadata value.
+    {_, 0} =
+      System.cmd(
+        "fwup",
+        [
+          "-c",
+          "-f",
+          conf_path,
+          "-o",
+          out_path
+        ],
+        env: [{"SOURCE_DATE_EPOCH", "0"}]
+      )
 
     {:ok, out_path}
   end
