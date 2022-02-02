@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.0
+
+* New features
+  * Add `apply/3` and `apply/4`
+  * Add `metadata/1` and `metadata/2`
+
 ## v1.0.0
 
 * New features
