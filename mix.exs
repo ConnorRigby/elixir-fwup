@@ -10,7 +10,10 @@ defmodule Fwup.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       description: description(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        flags: [:missing_return, :extra_return, :unmatched_returns, :error_handling, :underspecs]
+      ]
     ]
   end
 
