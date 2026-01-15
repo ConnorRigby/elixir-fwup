@@ -4,7 +4,7 @@ defmodule Fwup do
   """
 
   @doc "Returns a list of `[\"/path/to/device\", byte_size]`"
-  def get_devices do
+  def get_devices() do
     {result, 0} = System.cmd("fwup", ["--detect"])
 
     result
@@ -14,7 +14,7 @@ defmodule Fwup do
   end
 
   @doc "Returns the path to the `fwup` executable."
-  def exe do
+  def exe() do
     System.find_executable("fwup") || raise("Could not find `fwup` executable.")
   end
 

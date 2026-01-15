@@ -17,7 +17,18 @@ defmodule Fwup.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
+  def cli do
+    [
+      preferred_envs: %{
+        dialyzer: :test,
+        docs: :docs,
+        "hex.build": :docs,
+        "hex.publish": :docs,
+        credo: :test
+      }
+    ]
+  end
+
   def application do
     [
       extra_applications: [:logger]
@@ -27,8 +38,9 @@ defmodule Fwup.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, "~> 0.19", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: :dev, runtime: false}
+      {:credo, "~> 1.6", only: :test, runtime: false},
+      {:dialyxir, "~> 1.4", only: :test, runtime: false},
+      {:ex_doc, "~> 0.19", only: :docs, runtime: false}
     ]
   end
 
