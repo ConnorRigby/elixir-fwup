@@ -39,7 +39,7 @@ jobs:
           keys:
             - v1-mix-cache-<< parameters.tag >>-{{ checksum "mix.lock" }}
       - run: mix deps.get
-      - run: MIX_ENV=test mix compile
+      - run: mix test
       - when:
           condition:
             matches: { <<: *latest, value: << parameters.tag >> }

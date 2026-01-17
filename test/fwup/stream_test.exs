@@ -6,7 +6,7 @@ defmodule Fwup.StreamTest do
     {version_str, 0} = System.cmd("fwup", ["--version"])
     version = version_str |> String.trim() |> Version.parse!()
 
-    Version.match?(version, "~> 1.9.0") ||
+    Version.match?(version, "~> 1.9") ||
       raise "fwup 1.9.0 or later is needed for the unit tests"
 
     :ok

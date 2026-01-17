@@ -37,7 +37,7 @@ defmodule Fwup.TestSupport.Fixtures do
     key_path_no_extension = Path.join([System.tmp_dir(), key_name])
 
     for ext <- ~w(.priv .pub) do
-      File.rm(key_path_no_extension <> ext)
+      _ = File.rm(key_path_no_extension <> ext)
     end
 
     System.cmd("fwup", ["-g", "-o", key_path_no_extension], stderr_to_stdout: true)
@@ -56,7 +56,7 @@ defmodule Fwup.TestSupport.Fixtures do
   def create_firmware(firmware_name, meta_params \\ %{}) do
     conf_path = make_conf(struct(MetaParams, meta_params))
     out_path = Path.join([System.tmp_dir(), firmware_name <> ".fw"])
-    File.rm(out_path)
+    _ = File.rm(out_path)
 
     # SOURCE_DATE_EPOCH ensures fwup produces reproducible builds.
     # Specifically, this will pin the creation-time metadata value.
@@ -84,19 +84,20 @@ defmodule Fwup.TestSupport.Fixtures do
     dir = System.tmp_dir()
     output_path = Path.join([dir, output_name <> ".fw"])
 
-    System.cmd(
-      "fwup",
-      [
-        "-S",
-        "-s",
-        Path.join([dir, key_name <> ".priv"]),
-        "-i",
-        Path.join([dir, firmware_name <> ".fw"]),
-        "-o",
-        output_path
-      ],
-      stderr_to_stdout: true
-    )
+    {_, 0} =
+      System.cmd(
+        "fwup",
+        [
+          "-S",
+          "-s",
+          Path.join([dir, key_name <> ".priv"]),
+          "-i",
+          Path.join([dir, firmware_name <> ".fw"]),
+          "-o",
+          output_path
+        ],
+        stderr_to_stdout: true
+      )
 
     {:ok, output_path}
   end
@@ -105,7 +106,7 @@ defmodule Fwup.TestSupport.Fixtures do
   Create a signed firmware image, and return the path to that image.
   """
   def create_signed_firmware(key_name, firmware_name, output_name, meta_params \\ %{}) do
-    create_firmware(firmware_name, meta_params)
+    {:ok, _} = create_firmware(firmware_name, meta_params)
     sign_firmware(key_name, firmware_name, output_name)
   end
 
