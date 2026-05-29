@@ -3,6 +3,21 @@ defmodule Fwup.Metadata do
   Fwup Metadata
   """
 
+  @supported_metadata_atoms %{
+    "meta-product" => :product,
+    "meta-description" => :description,
+    "meta-version" => :version,
+    "meta-author" => :author,
+    "meta-platform" => :platform,
+    "meta-architecture" => :architecture,
+    "meta-vcs-identifier" => :vcs_identifier,
+    "meta-misc" => :misc,
+    "meta-creation-date" => :creation_date,
+    "meta-fwup-version" => :fwup_version,
+    "meta-uuid" => :uuid,
+    "meta-nickname" => :nickname
+  }
+
   @doc """
   Parse metadata string to a map
 
@@ -14,28 +29,21 @@ defmodule Fwup.Metadata do
   def parse(str, opts \\ []) do
     str
     |> String.split("\n", trim: true)
-    |> Enum.map(fn entry ->
+    |> Enum.reduce(%{}, fn entry, acc ->
       [key, val] = String.split(entry, "=", parts: 2, trim: true)
 
-      key =
-        key
-        |> String.trim_leading("meta-")
-
-      key =
-        if opts[:keys_to_atoms] do
-          key
-          |> String.replace("-", "_")
-          |> String.to_atom()
-        else
-          key
-        end
-
-      val =
-        val
-        |> String.trim("\"")
-
-      {key, val}
+      case parse_key(key, opts) do
+        nil -> acc
+        parsed_key -> Map.put(acc, parsed_key, String.trim(val, "\""))
+      end
     end)
-    |> Map.new()
+  end
+
+  defp parse_key(string_key, opts) do
+    if opts[:keys_to_atoms] do
+      Map.get(@supported_metadata_atoms, string_key)
+    else
+      String.trim_leading(string_key, "meta-")
+    end
   end
 end
