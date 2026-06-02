@@ -54,4 +54,4 @@ end
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/fwup](https://hexdocs.pm/fwup).
+be found at [https://fwup.hexdocs.pm](https://hexdocs.pm/fwup).
